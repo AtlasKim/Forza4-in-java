@@ -36,7 +36,7 @@ public class Player
             throw new Exception("Column full");
         }    
         
-        for(int i=5;i>0;i--)
+        for(int i=5;i>=0;i--)
         {
             if(!grid.getSpot(i,y).occupied()) //Ci facciamo ritornare direttamente dalla griglia le coordinate dello spot che ci serve
             {     
@@ -45,6 +45,6 @@ public class Player
             }
         }
         
-        return 10;
+        return 10;        //ritorniamo un valore non valido per futuri controlli
     }
 }
