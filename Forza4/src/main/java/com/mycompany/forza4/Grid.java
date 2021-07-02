@@ -39,12 +39,17 @@ public class Grid {
         return grid[x][y];
     }
     
-    /*public void setSpot(int x,int y) throws Exception
+    public boolean isFull()
     {
-        if (x < 0 || x > 5 || y < 0 || y > 6) {
-            throw new Exception("Index out of bound");
+        for(int i=0;i<righe;i++)
+        {
+            for(int j=0;j<colonne;j++)
+            {
+                if(grid[i][j].occupied()==false)
+                    return false;
+            }
         }
-  
-        return grid[x][y];
-    }*/
+        
+        return true;
+    }
 }

@@ -10,21 +10,21 @@ package com.mycompany.forza4;
  * @author Boku no Melo
  */
 
-enum Color
+enum Colore
 {
     ROSSO,VERDE,VUOTO;
 }
 
 public class Game {
-    private Grid griglia;      //da capire, voglio fare qui il test oppure posso fare un'altra classe di test?
+    private Grid griglia;      
     private Player[] giocatori = new Player[2];
-    //private boolean vittoria;
+    
     
     public Game ()
     {
         this.griglia = new Grid();
-        this.giocatori[0] = new Player(Color.ROSSO);  //giocatore con tessere rosse
-        this.giocatori[1] = new Player(Color.VERDE); //giocatore con tessere verdi
+        this.giocatori[0] = new Player(Colore.ROSSO);  //giocatore con tessere rosse
+        this.giocatori[1] = new Player(Colore.VERDE); //giocatore con tessere verdi
     }
     
     public Player getPlayer(int x) throws Exception
@@ -42,14 +42,14 @@ public class Game {
     
     public void printGrid () throws Exception
     {
-        Color spotColor;
+        Colore spotColor;
         
         for(int i=0;i<6;i++)
         {
             for(int j=0;j<7;j++)
             {
                 if(griglia.getSpot(i, j).getPiece()==null)
-                    spotColor = Color.VUOTO;
+                    spotColor = Colore.VUOTO;
                 else
                     spotColor = griglia.getSpot(i, j).getPiece().getPieceColor();
                 switch (spotColor)
@@ -73,19 +73,19 @@ public class Game {
         System.out.println("");
     }
     
-    public boolean victoryCheck(int x, int y, Color color) throws Exception
+    public boolean victoryCheck(int x, int y, Colore color) throws Exception
     {
         int counterColumn,counterRow,counterDiagonal1,counterDiagonal2;
         counterColumn=counterRow=counterDiagonal1=counterDiagonal2=0;
         
-        Color spotColor;
+        Colore spotColor;
                
         for(int i=0;i<6;i++)
         {
             for(int j=0;j<7;j++)
             {
                 if(griglia.getSpot(i,j).getPiece()==null)
-                    spotColor=Color.VUOTO;
+                    spotColor=Colore.VUOTO;
                 else
                     spotColor=griglia.getSpot(i,j).getPiece().getPieceColor();
                 

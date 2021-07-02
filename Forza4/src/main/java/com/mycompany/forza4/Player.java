@@ -12,19 +12,19 @@ package com.mycompany.forza4;
 
 public class Player 
 {
-    private Color playerColor;
+    private Colore playerColor;
     
-    public Player(Color playerColor)    //Costruttore
+    public Player(Colore playerColor)    //Costruttore
     {
         setPlayerColor(playerColor);
     }
     
-    public void setPlayerColor(Color playerColor)   //set del colore
+    public void setPlayerColor(Colore playerColor)   //set del colore
     {
         this.playerColor = playerColor;
     }
     
-    public Color getPlayerColor()                  //get del colore
+    public Colore getPlayerColor()                  //get del colore
     {
         return(this.playerColor);
     }

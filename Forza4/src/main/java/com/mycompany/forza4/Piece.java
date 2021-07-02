@@ -12,19 +12,19 @@ package com.mycompany.forza4;
 
 public class Piece {
 
-    private Color pieceColor;
+    private Colore pieceColor;
     
-    public Piece(Color pieceColor)
+    public Piece(Colore pieceColor)
     {
         setPieceColor(pieceColor);
     }
     
-    public void setPieceColor(Color pieceColor)
+    public void setPieceColor(Colore pieceColor)
     {
         this.pieceColor = pieceColor;
     }
     
-    public Color getPieceColor()
+    public Colore getPieceColor()
     {
         return(this.pieceColor);
     }

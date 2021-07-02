@@ -10,6 +10,7 @@ package com.mycompany.forza4;
  * @author Boku no Melo
  */
 import java.awt.BorderLayout;
+//import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
@@ -19,35 +20,35 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Graphics2D;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
+//import javax.swing.JPanel;
+//import java.awt.Graphics2D;
+//import java.awt.Graphics;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-
+//import javax.swing.BorderFactory;
+import javax.swing.JLayeredPane;
+import javax.swing.OverlayLayout;
+import javax.swing.JOptionPane;
 
 public class MyGridLayout extends JFrame{
     private Game forza4;
-    private Grid griglia;
+    //private Grid griglia;
     private int i = 0;
     private int spotRow = 10;
     private int victoryIndex = 0;
     private boolean victory;
+    private int victoryChoice;
+    private int draw;
     
     private double [] xArea;                            //Sono due array che ci aiutano a capire meglio in quale posizione inserire le tessere
     private double [] yArea;
     
     protected static int width = 1069;                  //erano 1169 e 960
     protected static int height = 942;
-    //private JLabel status;
-    private JPanel boardPanel;
+    
+    private JLayeredPane boardPanel;
     private JLabel boardIcon;
-    private BufferedImage redIcon;
-    private BufferedImage greenIcon;
-    //private double unit;
-    //private JLabel column;
+    private Icon redIcon;
+    private Icon greenIcon;
     private int xPos;
     private int yPos;
     private double yOffset;
@@ -57,66 +58,53 @@ public class MyGridLayout extends JFrame{
     private boolean isMouseClicked = false;
     
     public MyGridLayout() throws IOException{
-        super();
-        Icon board = new ImageIcon(getClass().getResource( "board.png"));  //tutte le immaggini devono essere nella stessa cartella dei file .class
+        super("Forza 4");
+        forza4 = new Game();
+        
+        
+        
+        Icon board = new ImageIcon(getClass().getResource( "board.png"));       //tutte le immaggini devono essere nella stessa cartella dei file .class
         setSize(width,height);  
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         
-        //greenIcon = ImageIO.read(new File("C:\\Users\\Boku no Melo\\Desktop\\Materie Università Carmelo\\Programmazione a oggetti\\PRATICA\\Forza4\\target\\classes\\com\\mycompany\\forza4\\verde.png"));
-        forza4 = new Game();
-        //status = new JLabel();
-       // status.setBackground(java.awt.Color.red);
-        //column = new JLabel();
-        //column.setBackground(java.awt.Color.BLUE);
-        
-        boardPanel = new JPanel();                                              //Convertirlo in JLayeredPane
-        boardIcon = new JLabel();
-        boardIcon.setIcon(board);                                               //Convertire in un tipo diverso di immagine se JLayeredPane dà problemi
-        boardPanel.add(boardIcon);                                              
-        boardPanel.setBackground(java.awt.Color.black);
-        boardPanel.setBounds(0, 0, board.getIconHeight(), board.getIconWidth());  //stabilire come fissare una dimensione massima della boardPanel
-       // unit = board.getIconWidth()/7;
+        boardPanel = new JLayeredPane();                                        
+        boardIcon = new JLabel(board);                                          //Convertire in un tipo diverso di immagine se JLayeredPane dà problemi
+        boardPanel.add(boardIcon,1);                                              
+        boardPanel.setBounds(0, 0, board.getIconHeight(), board.getIconWidth());  //stabilisce come fissare una dimensione massima della boardPanel
+       
         
         boardPanel.setPreferredSize(boardPanel.getSize());
         boardPanel.setMaximumSize(boardPanel.getSize());
         boardPanel.setMinimumSize(boardPanel.getSize());
+        boardPanel.setLayout(new OverlayLayout(boardPanel));
+        
+        
         
         add(boardPanel,BorderLayout.CENTER);
         boardPanel.addMouseListener(new MouseClickHandler());
-        //add(status, BorderLayout.EAST);
-        //add(column, BorderLayout.EAST);
-        //redIcon = new ImageIcon(getClass().getResource( "rosso.png"));
-        redIcon=ImageIO.read(new File("C:\\Users\\Boku no Melo\\Desktop\\Materie Università Carmelo\\Programmazione a oggetti\\PRATICA\\Forza4\\target\\classes\\com\\mycompany\\forza4\\rosso.png"));
-        griglia = new Grid();                                                   //cambiare tutte le icone per inserirle nel LayeredPane
+        
+        redIcon=new ImageIcon(getClass().getResource("rosso.png"));
+        greenIcon=new ImageIcon(getClass().getResource("verde.png"));
+        //griglia = new Grid();                                                   //cambiare tutte le icone per inserirle nel LayeredPane
         xArea=setXArea(xArea);
         yArea=setYArea(yArea);
         printArray(yArea);
         printArray(xArea);
     }                                                  //TROVARE UN METODO PER STAMPARE BUFFERED IMAGE SOPRA JPANEL USANDO IL METODO DRAWIMAGE
     
-    protected void paintComponent(Graphics g)
-    {
-        super.paintComponents(g);
-        Graphics2D g2d = (Graphics2D) g.create() ;
-        
-        if(redIcon != null)
-        {
-            g2d.drawImage(redIcon, xStampa(xPos), yStampa(yPos),rootPane);
-            //g2d.drawImage(redIcon, i, i, rootPane)
-        }
-            
-    }
     
-    //@Override
+    
     public class MouseClickHandler implements MouseListener,MouseMotionListener        //era private
     {
         // handle mouse-click event and determine which button was pressed
         @Override
         public void mouseClicked( MouseEvent event )
         {
-            setIsMouseClicked(true);                              //stiamo sfruttando un flag per fare dei controlli nel test e bloccare l'esecuzione
+            setIsMouseClicked(true);
+            JLabel tessera;                                     //stiamo sfruttando un flag per fare dei controlli nel test e bloccare l'esecuzione
             xPos = event.getX(); // get x-position of mouse
             yPos = event.getY(); // get y-position of mouse
             yColumnFound = findColonna(xPos,yArea);
@@ -132,30 +120,74 @@ public class MyGridLayout extends JFrame{
                 forza4.printGrid();
             
                 spotRow = forza4.getPlayer(i%2).move(forza4.getGrid(), yColumnFound);
+                
+                
                 //}
-            
-
-            
+                
+                if(forza4.getPlayer(i%2).getPlayerColor()==Colore.ROSSO)
+                {
+                    tessera = new JLabel(redIcon);
+                    tessera.setBounds(0,0,redIcon.getIconWidth(),redIcon.getIconHeight());
+                    //tessera.setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));           //INSERIRE SEMPRE SET BOUNDS E SET LOCATION 
+                    tessera.setLocation((int)yArea[yColumnFound]+3,(int)xArea[spotRow]+3);          // Le tessere non sono tutte perfettamente centrate
+                    boardPanel.add(tessera,2);
+                }
+                
+                else
+                {
+                    tessera = new JLabel(greenIcon);
+                    tessera.setBounds(xPos,yPos,redIcon.getIconWidth(),redIcon.getIconHeight());
+                    //tessera.setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));         //serviva per testare dove piazzare le tessere
+                    tessera.setLocation((int)yArea[yColumnFound]+3,(int)xArea[spotRow]+3);          
+                    boardPanel.add(tessera,2);
+                }
+                
+                
                 victory = forza4.victoryCheck(spotRow, yColumnFound, forza4.getPlayer(i%2).getPlayerColor());
             
                 victoryIndex = i;
                 i++;
                 forza4.printGrid();
-                JLabel picLabel = new JLabel(new ImageIcon(redIcon));
-                boardPanel.add(picLabel);
-                boardPanel.repaint();
-                //status.setText(String.format("Cliccato a [%d,%d], andrebbe nella colonna ",xPos,yPos));
-                //status.setText(String.format("Cliccato a [%d,%d]",xPos,yPos));
-                //column.setText(String.format(" Andrebbe nella colonna %d",(int)(xPos/unit)));         
-            
-            if(victory == true)
-            {
                 
-                    if(forza4.getPlayer(victoryIndex%2).getPlayerColor() == Color.ROSSO)
-                        System.out.println("Giocatore rosso, hai vinto! Volete giocare ancora? (Y/N)");
-                    else
-                        System.out.println("Giocatore verde, hai vinto! Volete giocare ancora? (Y/N)");
-            }
+                
+                if(victory == true)
+                {
+
+                        if(forza4.getPlayer(victoryIndex%2).getPlayerColor() == Colore.ROSSO) {
+                            victoryChoice = JOptionPane.showConfirmDialog(null, "Giocatore rosso, hai vinto! Volete giocare ancora?","Vittoria!",JOptionPane.YES_NO_OPTION);
+                            //System.out.println("Giocatore rosso, hai vinto! Volete giocare ancora? (Y/N)");
+
+                        }    
+                        else
+                            victoryChoice = JOptionPane.showConfirmDialog(null, "Giocatore verde, hai vinto! Volete giocare ancora?","Vittoria!",JOptionPane.YES_NO_OPTION);
+
+                        if(victoryChoice==JOptionPane.NO_OPTION)
+                            System.exit(0);
+                        else if(victoryChoice ==JOptionPane.YES_OPTION)
+                        {
+                           forza4.getGrid().resetGrid();
+                           boardPanel.removeAll();
+                           boardPanel.add(boardIcon,1);
+                           boardPanel.repaint(); 
+                        }
+
+                }
+                
+                if(forza4.getGrid().isFull() == true)
+                {
+                    draw = JOptionPane.showConfirmDialog(null, "Pareggio! Volete giocare ancora?","Pareggio!",JOptionPane.YES_NO_OPTION);
+                    if(draw == JOptionPane.NO_OPTION)
+                        System.exit(0);
+                    
+                    else if(draw == JOptionPane.YES_OPTION)
+                    {
+                        forza4.getGrid().resetGrid();
+                        boardPanel.removeAll();
+                        boardPanel.add(boardIcon,1);
+                        boardPanel.repaint();
+                    }
+                }
+                
             }catch (Exception ex) {
                     Logger.getLogger(MyGridLayout.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -177,10 +209,6 @@ public class MyGridLayout extends JFrame{
         @Override
         public void mouseMoved(MouseEvent e){}
     }    
-    /*public double getUnit()
-    {
-        return unit;
-    }*/
     
     public double[] setYArea(double []yArea)
     {
@@ -201,7 +229,7 @@ public class MyGridLayout extends JFrame{
         xArea = new double [Grid.righe];
         xOffset = boardPanel.getHeight()/Grid.righe;
         
-         for(int i = 0; i<Grid.righe;i++)
+        for(int i = 0; i<Grid.righe;i++)
         {
             xArea[i]=(xOffset*i);                                               // |0| |offset| |offset*2|
         }
@@ -221,7 +249,7 @@ public class MyGridLayout extends JFrame{
         return xArea.length-1;
     }
     
-    public int findRiga(int yPos, double []yArea)                            //ritorna l'indice corretto della colonna dove andrebbe inserita la tessera
+    public int findRiga(int yPos, double []yArea)                               //ritorna l'indice corretto della colonna dove andrebbe inserita la tessera
     {
         for(int i=0;i<yArea.length;i++)
         {
@@ -283,4 +311,5 @@ public class MyGridLayout extends JFrame{
     {
         victory = flag;
     }
+    
 }
